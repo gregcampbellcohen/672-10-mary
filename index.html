@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8 />
+	<title>Costliest Engagements of the American Civil War</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<link rel='icon' href='https://newmapsplus.github.io/favicon.ico' type='image/x-icon' />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300,300i,400,900i" rel="stylesheet">
+
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: #ebebee;
+			font-family: 'Raleway', sans-serif;
+			font-weight: 300;
+			color: #3d3d3d;
+			font-size: 100%;
+			/* 16px is default browser size */
+
+		}
+
+		header,
+		section,
+		footer {
+			width: 80%;
+			margin: 10px auto;
+		}
+
+		h1 {
+			font-weight: 900;
+			font-size: 2.8em;
+			font-style: bold;
+			/* The em unit. 3x the current size */
+			letter-spacing: .02em;
+			margin: 5px 0;
+			/* text-transform: uppercase; */
+		}
+
+		h2 {
+			font-weight: 300;
+			color: #63666a;
+			font-size: 2.2em;
+			letter-spacing: .06em;
+			font-style: bold;
+			margin: 5px 0;
+		}
+
+		h3 {
+			font-weight: 300i;
+			font-size: 1.5em;
+			margin-bottom: 5px;
+		}
+
+		p {
+			font-size: 1.3em;
+			line-height: 1.8em;
+			margin-bottom: 5px;
+		}
+
+		a {
+      		color: #f77f00;
+     		font-weight: bold;
+      		text-decoration: none;
+  	    }
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		ul {
+			padding: 0px 20px 4px 20px;
+			font-size: 1.1em;
+			line-height: 1.2em;
+			color: #63666a;
+		}
+
+		li {
+			margin: 10px 0
+		}
+
+		hr {
+			margin: 20px 0;
+			border: 0;
+			height: 1px;
+			background: #63666a;
+
+		}
+
+		.linkbox {
+			margin: 3px 0 20px 0;
+			display: block;
+			font-size: 0.9em;
+			font-weight: 300;
+			line-height: 1.3em;
+		}
+
+		#map {
+			width: 100%;
+			height: 950px;
+			margin: 20px auto;
+
+		}
+
+		.max-image-width {
+			width: 100%;
+		}
+
+		/* Use float property to make two-column layout */
+		.first-column {
+			float: left;
+			width: 100%;
+			padding-right: 2%;
+		}
+
+		.column {
+			float: left;
+			width: 49%;
+		}
+
+		/* Clear floats after the columns */
+		.row::after {
+			content: "";
+			display: block;
+			clear: both;
+		}
+
+		/* When browser is 900px wide or less */
+		@media screen and (max-width: 900px) {
+
+			.first-column,
+			.second-column {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<h1>Costliest Engagements of the American Civil War</h1>
+	</header>
+	<section>
+		<div class="row">
+			<div id="map"></div>
+
+			<div class="first-column">
+				<h2>Casualties in the American Civil War</h2>
+				<p>
+				The American Civil War began with the shelling of Fort Sumter on April 12, 1861 and ended with General Robert E. Lee's surrender at Appomatox Court House. In that time, historians estimate that there were as many as two million casualties and roughly 750,000 deaths, making the American Civil War the deadliest war in American history. The map above shows the costliest battles in the war, their casualty rates on each side, and their outcome. The death toll on the battlefield pales in comparison to the assault by the Third Army: Disease. Historians estimate that approximately two-thirds of all soldier deaths in the American Civil War were caused by diseases like pneuomnia, typhoid, dirrhea, dysentery, and malaria, as medicine and sanitation were fundamentally opaque concepts for doctors at the time.
+				<br>
+				<br>
+				All data used in this project was sourced from <a href="https://en.wikipedia.org/wiki/American_Civil_War">Wikipedia</a>.
+				</p>
+
+				<p><b>Social links</b></p>
+				<ul>
+					<li>See my projects on GitHub: <a href="https://github.com/gregcampbellcohen">Greg Campbell-Cohen</a>. </li>
+					<li>Follow me on Twitter: <a href="https://twitter.com/gcampbellcohen">@gcampbellcohen</a>. </li>
+					<li>Visit my <a href='https://www.linkedin.com/in/greg-campbell-cohen-96614792/'>LinkedIn</a>. </li>
+				</ul>
+
+
+			</div>
+			</div>
+		</div>
+	</section>
+	<footer>
+		<hr>
+
+		<a href="https://newmapsplus.github.io">
+			<img src="https://newmapsplus.github.io/assets/graphics/logo-2018-nmp-75px-h-gray.png" alt="University of Kentucky Geography">
+		</a>
+
+		<a href="https://uky-gis.github.io">
+			<img src="https://newmapsplus.github.io/assets/graphics/logo-2018-geography-75px-h.png" alt="University of Kentucky Geography">
+		</a>
+
+	</footer>
+
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+	<script src="data/battles.js"></script>
+    <script>
+		// map options
+		var options = {
+		  center: [35.9, -83.9],
+		  zoom: 5,
+		};
+  
+		// create a Leaflet map in our division container with id of 'map'
+		var map = L.map("map", options);
+  
+		// Leaflet providers base map URL
+		var basemap_source =
+		  "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}.png";
+  
+		// Leaflet providers attributes
+		var basemap_options = {
+		  attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+		  subdomains: "abcd",
+		  maxZoom: 19,
+		  minZoom: 5
+		};
+  
+		// request some basemap tiles and add to the map
+		var tiles = L.tileLayer(basemap_source, basemap_options).addTo(map);
+
+		var commonStyles = {
+		  weight: 1,
+		  stroke: 1,
+		  fillOpacity: 0.8,
+		};
+
+		var unibattles = L.geoJson(battles, {
+		  pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, commonStyles);
+		  },
+		  filter: function (feature) {
+			if (feature.properties.victory_uni) {
+			  return feature;
+			}
+		  },
+		  style: function (feature) {
+			return {
+			  color: "#FFFFFF",
+			  fillColor: "#1f78b4",
+			  radius: getRadius(feature.properties.tot_cas),
+			};
+		  },
+		  onEachFeature: function (feature, layer) {
+			layer.on("mouseover", function () {
+			  layer.setStyle({
+				fillColor: "orange",
+			  });
+			});
+			layer.on("mouseout", function () {
+			  layer.setStyle({
+				fillColor: "#1f78b4",
+			  });
+			});
+			layer.bindPopup(
+			  "<b>" +
+				layer.feature.properties.name +
+				"</b><br>" +
+				"<b>Union Victory</b>" +
+				"<br><b>Union Casualties </b>" +
+				layer.feature.properties.union_cas +
+				"<br><b>Confederate Casualties </b>" +
+				layer.feature.properties.con_cas +				
+				"<br><b>Total Casualties </b>" +
+				layer.feature.properties.tot_cas
+			);
+		  },
+		}).addTo(map);
+
+		var conbattles = L.geoJson(battles, {
+		  pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, commonStyles);
+		  },
+		  filter: function (feature) {
+			if (feature.properties.victory_con) {
+			  return feature;
+			}
+		  },
+		  style: function (feature) {
+			return {
+			  color: "#FFFFFF",
+			  fillColor: "#808080",
+			  radius: getRadius(feature.properties.tot_cas),
+			};
+		  },
+		  onEachFeature: function (feature, layer) {
+			layer.on("mouseover", function () {
+			  layer.setStyle({
+				fillColor: "orange",
+			  });
+			});
+			layer.on("mouseout", function () {
+			  layer.setStyle({
+				fillColor: "#808080",
+			  });
+			});
+			layer.bindPopup(
+			  "<b>" +
+				layer.feature.properties.name +
+				"</b><br>" +
+				"<b>Confederate Victory</b>" +
+				"<br><b>Union Casualties </b>" +
+				layer.feature.properties.union_cas +
+				"<br><b>Confederate Casualties </b>" +
+				layer.feature.properties.con_cas +				
+				"<br><b>Total Casualties </b>" +
+				layer.feature.properties.tot_cas
+			);
+		  },
+		}).addTo(map);
+
+		var incbattles = L.geoJson(battles, {
+		  pointToLayer: function (feature, latlng) {
+			return L.circleMarker(latlng, commonStyles);
+		  },
+		  filter: function (feature) {
+			if (feature.properties.victory_inc) {
+			  return feature;
+			}
+		  },
+		  style: function (feature) {
+			return {
+			  color: "#FFFFFF",
+			  fillColor: "#FF0000",
+			  radius: getRadius(feature.properties.tot_cas),
+			};
+		  },
+		  onEachFeature: function (feature, layer) {
+			layer.on("mouseover", function () {
+			  layer.setStyle({
+				fillColor: "orange",
+			  });
+			});
+			layer.on("mouseout", function () {
+			  layer.setStyle({
+				fillColor: "#FF0000",
+			  });
+			});
+			layer.bindPopup(
+			  "<b>" +
+				layer.feature.properties.name +
+				"</b><br>" +
+				"<b>Victory Inconclusive</b>" +
+				"<br><b>Union Casualties </b>" +
+				layer.feature.properties.union_cas +
+				"<br><b>Confederate Casualties </b>" +
+				layer.feature.properties.con_cas +				
+				"<br><b>Total Casualties </b>" +
+				layer.feature.properties.tot_cas
+			);
+		  },
+		}).addTo(map);
+		
+
+		function getRadius(area) {
+		  var radius = Math.sqrt(area/Math.PI);
+		  return radius *.2;
+		}
+
+	  </script>
+
+</body>
+
+</html>
